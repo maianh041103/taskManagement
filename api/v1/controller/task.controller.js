@@ -1,4 +1,5 @@
 const Task = require('../model/task.model');
+const paginationHelper = require('../../../helper/pagination');
 
 //[GET] /api/v1/tasks/
 module.exports.index = async (req, res) => {
@@ -13,16 +14,27 @@ module.exports.index = async (req, res) => {
   }
   //End lọc theo trạng thái
 
-  //Sắp xếp 
+  //Sort
   const sortKey = req.query.sortKey;
   const sortValue = req.query.sortValue;
   const sort = {};
   if (sortKey && sortValue) {
     sort[sortKey] = sortValue;
   }
-  //End sắp xếp
+  //End sort
 
-  const tasks = await Task.find(find).sort(sort);
+  //Pagination
+  let objectPagination = {
+    limitItems: 2,
+    pageCurrent: 1
+  }
+
+  const countRecords = await Task.countDocuments(find);
+
+  objectPagination = paginationHelper(objectPagination, req.query, countRecords);
+  //End Pagination
+
+  const tasks = await Task.find(find).sort(sort).limit(objectPagination.limitItems).skip(objectPagination.pageSkip);
   res.json(tasks);
 }
 
