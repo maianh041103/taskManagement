@@ -9,23 +9,12 @@ const database = require('./config/database');
 database.connect();
 //End connect database
 
-const Task = require('./model/task.model');
+const Task = require('./api/v1/model/task.model');
 
-app.get('/tasks', async (req, res) => {
-  const tasks = await Task.find({
-    deleted: false
-  })
-  res.json(tasks);
-});
-
-app.get('/tasks/detail/:id', async (req, res) => {
-  const id = req.params.id;
-  const task = await Task.find({
-    _id: id,
-    deleted: false,
-  })
-  res.json(task);
-})
+//Nhúng route
+const route = require('./api/v1/routes/index.route');
+route(app);
+//End nhúng route
 
 app.listen(port, () => {
   console.log("app listen on " + port);
