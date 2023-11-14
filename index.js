@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 require("dotenv").config();
 
 const app = express();
@@ -9,7 +10,8 @@ const database = require('./config/database');
 database.connect();
 //End connect database
 
-const Task = require('./api/v1/model/task.model');
+//Nhúng bodyParser
+app.use(bodyParser.json());
 
 //Nhúng route
 const route = require('./api/v1/routes/index.route');
