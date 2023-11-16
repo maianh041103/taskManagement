@@ -35,3 +35,36 @@ module.exports.register = async (req, res) => {
     message: "Đăng ký tài khoản thành công"
   })
 }
+
+module.exports.login = async (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const user = await User.findOne({
+    email: email,
+    deleted: false
+  });
+
+  if (!user) {
+    res.json({
+      code: 400,
+      message: "Tài khoản không tồn tại"
+    })
+    return;
+  }
+
+  if (user.password != md5(password)) {
+    res.json({
+      code: 400,
+      message: "Mật khẩu không chính xác"
+    })
+    return;
+  }
+
+  res.cookie("token", user.token);
+
+  res.json({
+    code: 200,
+    message: "Đăng nhập thành công",
+    token: user.token
+  })
+}
