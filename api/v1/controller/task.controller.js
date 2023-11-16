@@ -103,3 +103,21 @@ module.exports.changeMulti = async (req, res) => {
     });
   }
 }
+
+//[POST] /api/v1/task/create
+module.exports.create = async (req, res) => {
+  try {
+    const data = new Task(req.body);
+    await data.save();
+    res.json({
+      code: 200,
+      message: "Thêm mới công việc thành công",
+      data: data
+    })
+  } catch (error) {
+    res.json({
+      code: 400,
+      message: "Thêm mới công việc thất bại"
+    })
+  }
+}
