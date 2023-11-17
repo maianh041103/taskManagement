@@ -4,7 +4,7 @@ const md5 = require('md5');
 const generateHelper = require('../../../helper/generate');
 const sendEmailHelper = require('../../../helper/sendEmail.js');
 
-
+//[GET] /api/v1/users/register
 module.exports.register = async (req, res) => {
   const userInfo = {
     fullName: req.body.fullName,
@@ -38,6 +38,7 @@ module.exports.register = async (req, res) => {
   })
 }
 
+//[GET] /api/v1/users/login
 module.exports.login = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -71,6 +72,7 @@ module.exports.login = async (req, res) => {
   })
 }
 
+//[GET] /api/v1/users/password/forgot
 module.exports.forgot = async (req, res) => {
   const email = req.body.email;
   const user = await User.findOne({
@@ -87,7 +89,7 @@ module.exports.forgot = async (req, res) => {
   const objectForgotPassword = {
     email: email,
     otp: generateHelper.generateRandomNumber(8),
-    expireAt: Date.now() + 300
+    expireAt: Date.now() + 300000
   }
 
   const forgotPassword = new ForgotPassword(objectForgotPassword);
@@ -104,4 +106,67 @@ module.exports.forgot = async (req, res) => {
     code: 200,
     message: "Đã gửi mã OTP qua email"
   })
+}
+
+//[POST] /api/v1/users/password/otp
+module.exports.otp = async (req, res) => {
+  const otp = req.body.otp;
+  const email = req.body.email;
+  const result = await ForgotPassword.findOne({
+    email: email,
+    otp: otp
+  });
+  if (result) {
+    const user = await User.findOne({
+      email: email
+    });
+
+    res.cookie("token", user.token);
+
+    res.json({
+      code: 200,
+      message: "Mã OTP chính xác",
+      token: user.token
+    })
+  }
+  else {
+    res.json({
+      code: 400,
+      message: "Mã OTP không chính xác"
+    })
+  }
+}
+
+//[POST] /api/v1/user/password/reset
+module.exports.reset = async (req, res) => {
+  const password = req.body.password;
+  const token = req.body.token;
+  const user = await User.findOne({
+    token: token,
+    deleted: false
+  })
+  if (!user) {
+    res.json({
+      code: 400,
+      message: "Tài khoản không tồn tại"
+    });
+    return;
+  }
+  if (user.password === md5(password)) {
+    res.json({
+      code: 400,
+      message: "Vui lòng nhập mật khẩu mới khác mật khẩu cũ"
+    })
+  } else {
+    await User.updateOne({
+      token: token
+    }, {
+      password: md5(password)
+    });
+
+    res.json({
+      code: 200,
+      message: "Thay đổi mật khẩu thành công"
+    });
+  }
 }

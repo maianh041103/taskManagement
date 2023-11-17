@@ -11,4 +11,8 @@ route.post('/login', loginValidate.login, controller.login);
 
 route.post('/password/forgot', forgotPasswordValidate.forgot, controller.forgot);
 
+route.post('/password/otp', controller.otp);
+
+route.post('/password/reset', controller.reset);
+
 module.exports = route;
