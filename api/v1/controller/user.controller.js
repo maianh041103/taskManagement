@@ -175,13 +175,8 @@ module.exports.reset = async (req, res) => {
 module.exports.infoUser = async (req, res) => {
   const id = req.params.id;
 
-  const user = await User.findOne({
-    _id: id,
-    deleted: false
-  }).select("-password");
-
   res.json({
     code: 200,
-    user: user
+    user: req.user
   })
 }
