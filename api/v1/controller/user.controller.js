@@ -180,3 +180,15 @@ module.exports.infoUser = async (req, res) => {
     user: req.user
   })
 }
+
+//[GET] /api/v1/user/list
+module.exports.listUser = async (req, res) => {
+  const listUser = await User.find({
+    deleted: false
+  }).select("-password");
+
+  res.json({
+    code: 200,
+    listUser: listUser
+  })
+}

@@ -20,4 +20,6 @@ route.post('/password/reset', controller.reset);
 
 route.get('/detail/:id', authMiddlerware.auth, controller.infoUser);
 
+route.get('/list', authMiddlerware.auth, controller.listUser);
+
 module.exports = route;
