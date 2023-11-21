@@ -1,8 +1,9 @@
 const User = require('../model/user.model');
 
 module.exports.auth = async (req, res, next) => {
-  const token = req.headers.authorization.split(" ")[1];
-  if (token) {
+  if (req.headers.authorization) {
+    const token = req.headers.authorization.split(" ")[1];
+
     const user = await User.findOne({
       token: token,
       deleted: false
@@ -16,7 +17,6 @@ module.exports.auth = async (req, res, next) => {
         message: "Bạn không có quyền truy cập vào đây"
       });
     }
-
   }
   else {
     res.json({
