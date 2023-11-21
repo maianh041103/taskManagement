@@ -15,4 +15,6 @@ route.post('/password/otp', controller.otp);
 
 route.post('/password/reset', controller.reset);
 
+route.get('/detail/:id', controller.infoUser);
+
 module.exports = route;

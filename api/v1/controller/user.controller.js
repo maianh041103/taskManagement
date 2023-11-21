@@ -170,3 +170,18 @@ module.exports.reset = async (req, res) => {
     });
   }
 }
+
+//[GET] /api/v1/user/detail:is
+module.exports.infoUser = async (req, res) => {
+  const id = req.params.id;
+
+  const user = await User.findOne({
+    _id: id,
+    deleted: false
+  }).select("-password");
+
+  res.json({
+    code: 200,
+    user: user
+  })
+}
