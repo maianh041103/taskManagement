@@ -125,12 +125,12 @@ module.exports.create = async (req, res) => {
       code: 200,
       message: "Thêm mới công việc thành công",
       task: task
-    })
+    });
   } catch (error) {
     res.json({
       code: 400,
       message: "Thêm mới công việc thất bại"
-    })
+    });
   }
 }
 
